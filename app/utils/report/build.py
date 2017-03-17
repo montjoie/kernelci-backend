@@ -538,8 +538,9 @@ def _create_build_email(**kwargs):
     return txt_body, html_body, subject_str
 
 
-def create_build_report(job,
-                        kernel, email_format, db_options, mail_options=None):
+def create_build_report(
+        job,
+        branch, kernel, email_format, db_options, mail_options=None):
     """Create the build report email to be sent.
 
     :param job: The name of the job.
@@ -570,6 +571,7 @@ def create_build_report(job,
 
     spec = {
         models.JOB_KEY: job,
+        models.GIT_BRANCH_KEY: branch,
         models.KERNEL_KEY: kernel
     }
 
@@ -621,6 +623,7 @@ def create_build_report(job,
     # the details.
     errors_spec = {
         models.JOB_KEY: job,
+        models.GIT_BRANCH_KEY: branch,
         models.KERNEL_KEY: kernel
     }
     errors_summary = utils.db.find_one2(
@@ -657,24 +660,25 @@ def create_build_report(job,
         "total_count": total_count,
         "total_unique_data": total_unique_data,
         "warnings_count": warnings_count,
+        "git_branch": branch,
         models.JOB_KEY: job,
         models.KERNEL_KEY: kernel,
     }
 
-    kwargs["git_commit"], kwargs["git_url"], kwargs["git_branch"] = \
+    kwargs["git_commit"], kwargs["git_url"] = \
         rcommon.get_git_data(job, kernel, db_options)
 
     custom_headers = {
         rcommon.X_REPORT: rcommon.BUILD_REPORT_TYPE,
-        rcommon.X_BRANCH: kwargs["git_branch"],
+        rcommon.X_BRANCH: branch,
         rcommon.X_TREE: job,
         rcommon.X_KERNEL: kernel,
     }
 
     if all([fail_count == 0, total_count == 0]):
         utils.LOG.warn(
-            "Nothing found for '%s-%s': no build email report sent",
-            job, kernel)
+            "Nothing found for '%s-%s-%s': no build email report sent",
+            job, branch, kernel)
     else:
         txt_body, html_body, subject = _create_build_email(**kwargs)
 

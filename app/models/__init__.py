@@ -732,6 +732,7 @@ REPORT_VALID_KEYS = {
 SEND_VALID_KEYS = {
     "POST": {
         MANDATORY_KEYS: [
+            GIT_BRANCH_KEY,
             JOB_KEY,
             KERNEL_KEY
         ],
@@ -744,6 +745,7 @@ SEND_VALID_KEYS = {
             BUILD_REPORT_SEND_TO_KEY,
             DELAY_KEY,
             EMAIL_FORMAT_KEY,
+            GIT_BRANCH_KEY,
             IN_REPLY_TO_KEY,
             JOB_KEY,
             KERNEL_KEY,

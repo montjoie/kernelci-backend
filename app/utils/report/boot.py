@@ -243,9 +243,10 @@ def parse_regressions(data, **kwargs):
 # pylint: disable=too-many-locals
 # pylint: disable=star-args
 # pylint: disable=too-many-arguments
-def create_boot_report(job,
-                       kernel,
-                       lab_name, email_format, db_options, mail_options=None):
+def create_boot_report(
+        job,
+        branch,
+        kernel, lab_name, email_format, db_options, mail_options=None):
     """Create the boot report email to be sent.
 
     If lab_name is not None, it will trigger a boot report only for that
@@ -279,6 +280,7 @@ def create_boot_report(job,
 
     total_count, total_unique_data = rcommon.get_total_results(
         job,
+        branch,
         kernel,
         models.BOOT_COLLECTION,
         db_options,
@@ -287,16 +289,18 @@ def create_boot_report(job,
 
     total_builds, _ = rcommon.get_total_results(
         job,
+        branch,
         kernel,
         models.BUILD_COLLECTION,
         db_options
     )
 
-    git_commit, git_url, git_branch = rcommon.get_git_data(
-        job, kernel, db_options)
+    git_commit, git_url = rcommon.get_git_data(
+        job, branch, kernel, db_options)
 
     spec = {
         models.JOB_KEY: job,
+        models.GIT_BRANCH_KEY: branch,
         models.KERNEL_KEY: kernel,
         models.STATUS_KEY: models.OFFLINE_STATUS
     }
@@ -365,7 +369,7 @@ def create_boot_report(job,
         "email_format": email_format,
         "fail_count": fail_count - conflict_count,
         "failed_data": failed_data,
-        "git_branch": git_branch,
+        "git_branch": branch,
         "git_commit": git_commit,
         "git_url": git_url,
         "info_email": info_email,
@@ -386,7 +390,7 @@ def create_boot_report(job,
 
     custom_headers = {
         rcommon.X_REPORT: rcommon.BOOT_REPORT_TYPE,
-        rcommon.X_BRANCH: git_branch,
+        rcommon.X_BRANCH: branch,
         rcommon.X_TREE: job,
         rcommon.X_KERNEL: kernel,
     }
@@ -461,7 +465,8 @@ def create_boot_report(job,
         txt_body, html_body, subject = _create_boot_email(**kwargs)
     elif fail_count == 0 and total_count == 0:
         utils.LOG.warn(
-            "Nothing found for '%s-%s': no email report sent", job, kernel)
+            "Nothing found for '%s-%s-%s': no email report sent",
+            job, branch, kernel)
 
     return txt_body, html_body, subject, custom_headers
 
@@ -669,7 +674,7 @@ def get_boot_subject_string(**kwargs):
     base_lab_4 = G_(
         u"{:s}: {:s}: {:s}, {:s} with {:s}, {:s}, {:s} {:s} - {:s}")
 
-    if any([total_count == pass_count, total_count == fail_count]):
+    if (total_count == pass_count and total_count == fail_count):
         # Everything is good or failed.
         if lab_name:
             subject_str = base_lab_0.format(
@@ -707,7 +712,7 @@ def get_boot_subject_string(**kwargs):
                 base_subject,
                 total_boots,
                 failed_boots, passed_boots, untried_boots, kernel_name)
-    elif all([untried_count == 0, offline_count == 0, conflict_count == 0]):
+    elif (untried_count == 0 and offline_count == 0 and conflict_count == 0):
         # Passed and failed.
         if lab_name:
             subject_str = base_lab_0.format(
