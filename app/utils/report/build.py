@@ -666,7 +666,7 @@ def create_build_report(
     }
 
     kwargs["git_commit"], kwargs["git_url"] = \
-        rcommon.get_git_data(job, kernel, db_options)
+        rcommon.get_git_data(job, branch, kernel, db_options)
 
     custom_headers = {
         rcommon.X_REPORT: rcommon.BUILD_REPORT_TYPE,
