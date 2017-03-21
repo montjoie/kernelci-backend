@@ -584,13 +584,13 @@ def _search_conflicts(failed, passed):
         :return True or False.
         """
         is_valid = False
-        if all([
-                f_g(models.ID_KEY) != p_g(models.ID_KEY),
-                f_g(models.LAB_NAME_KEY) != p_g(models.LAB_NAME_KEY),
-                f_g(models.BOARD_KEY) == p_g(models.BOARD_KEY),
-                f_g(models.ARCHITECTURE_KEY) == p_g(models.ARCHITECTURE_KEY),
+        if (f_g(models.ID_KEY) != p_g(models.ID_KEY) and
+                f_g(models.LAB_NAME_KEY) != p_g(models.LAB_NAME_KEY) and
+                f_g(models.BOARD_KEY) == p_g(models.BOARD_KEY) and
+                f_g(models.ARCHITECTURE_KEY) ==
+                p_g(models.ARCHITECTURE_KEY) and
                 f_g(models.DEFCONFIG_FULL_KEY) ==
-                p_g(models.DEFCONFIG_FULL_KEY)]):
+                p_g(models.DEFCONFIG_FULL_KEY)):
             is_valid = True
         return is_valid
 
@@ -646,7 +646,7 @@ def get_boot_subject_string(**kwargs):
         conflict_count
     )
     offline_boots = G_(u"{offline_count:d} offline")
-    kernel_name = G_(u"({kernel:s})")
+    kernel_name = G_(u"({kernel:s} \u2013 {git_branch:s})")
     lab_description = G_(u"{lab_name:s}")
     untried_boots = G_(u"{untried_count:d} untried/unknown")
 
@@ -674,7 +674,7 @@ def get_boot_subject_string(**kwargs):
     base_lab_4 = G_(
         u"{:s}: {:s}: {:s}, {:s} with {:s}, {:s}, {:s} {:s} - {:s}")
 
-    if (total_count == pass_count and total_count == fail_count):
+    if total_count == pass_count and total_count == fail_count:
         # Everything is good or failed.
         if lab_name:
             subject_str = base_lab_0.format(
@@ -724,7 +724,7 @@ def get_boot_subject_string(**kwargs):
             subject_str = base_0.format(
                 base_subject,
                 total_boots, failed_boots, passed_boots, kernel_name)
-    elif all([untried_count > 0, offline_count == 0, conflict_count == 0]):
+    elif untried_count > 0 and offline_count == 0 and conflict_count == 0:
         # Passed, failed and untried.
         if lab_name:
             subject_str = base_lab_2.format(
@@ -737,7 +737,7 @@ def get_boot_subject_string(**kwargs):
                 base_subject,
                 total_boots,
                 failed_boots, passed_boots, untried_boots, kernel_name)
-    elif all([untried_count > 0, offline_count > 0, conflict_count == 0]):
+    elif untried_count > 0 and offline_count > 0 and conflict_count == 0:
         # Passed, failed, untried and offline.
         if lab_name:
             subject_str = base_lab_3.format(
@@ -752,7 +752,7 @@ def get_boot_subject_string(**kwargs):
                 total_boots,
                 failed_boots,
                 passed_boots, offline_boots, untried_boots, kernel_name)
-    elif all([untried_count > 0, offline_count > 0, conflict_count > 0]):
+    elif untried_count > 0 and offline_count > 0 and conflict_count > 0:
         # Passed, failed, untried and offline with conflict.
         if lab_name:
             subject_str = base_lab_4.format(
@@ -769,7 +769,7 @@ def get_boot_subject_string(**kwargs):
                 failed_boots,
                 passed_boots,
                 offline_boots, untried_boots, conflict_boots, kernel_name)
-    elif all([untried_count == 0, offline_count > 0, conflict_count == 0]):
+    elif untried_count == 0 and offline_count > 0 and conflict_count == 0:
         # Passed, failed and offline.
         if lab_name:
             subject_str = base_lab_2.format(
@@ -782,7 +782,7 @@ def get_boot_subject_string(**kwargs):
                 base_subject,
                 total_boots,
                 failed_boots, passed_boots, offline_boots, kernel_name)
-    elif all([untried_count == 0, offline_count > 0, conflict_count > 0]):
+    elif untried_count == 0 and offline_count > 0 and conflict_count > 0:
         # Passed, failed, offline with conflicts.
         if lab_name:
             subject_str = base_lab_3.format(
@@ -797,7 +797,7 @@ def get_boot_subject_string(**kwargs):
                 total_boots,
                 failed_boots,
                 passed_boots, offline_boots, conflict_boots, kernel_name)
-    elif all([untried_count == 0, offline_count == 0, conflict_count > 0]):
+    elif untried_count == 0 and offline_count == 0 and conflict_count > 0:
         # Passed, failed with conflicts.
         if lab_name:
             subject_str = base_lab_2.format(
@@ -906,20 +906,20 @@ def _create_boot_email(**kwargs):
             unique_builds
         )
 
-        if all([unique_boards > 0, unique_socs > 0, unique_builds > 0]):
+        if unique_boards > 0 and unique_socs > 0 and unique_builds > 0:
             tested_string = tested_three.format(
                 boards_str, soc_str, builds_str)
-        elif all([unique_boards > 0, unique_socs > 0, unique_builds == 0]):
+        elif unique_boards > 0 and unique_socs > 0 and unique_builds == 0:
             tested_string = tested_two.format(boards_str, soc_str)
-        elif all([unique_boards > 0, unique_socs == 0, unique_builds > 0]):
+        elif unique_boards > 0 and unique_socs == 0 and unique_builds > 0:
             tested_string = tested_two.format(boards_str, builds_str)
-        elif all([unique_boards == 0, unique_socs > 0, unique_builds > 0]):
+        elif unique_boards == 0 and unique_socs > 0 and unique_builds > 0:
             tested_string = tested_two.format(soc_str, builds_str)
-        elif all([unique_boards > 0, unique_socs == 0, unique_builds == 0]):
+        elif unique_boards > 0 and unique_socs == 0 and unique_builds == 0:
             tested_string = tested_one.format(boards_str)
-        elif all([unique_boards == 0, unique_socs > 0, unique_builds == 0]):
+        elif unique_boards == 0 and unique_socs > 0 and unique_builds == 0:
             tested_string = tested_one.format(soc_str)
-        elif all([unique_boards == 0, unique_socs == 0, unique_builds > 0]):
+        elif unique_boards == 0 and unique_socs == 0 and unique_builds > 0:
             tested_string = tested_one.format(builds_str)
 
         if tested_string:

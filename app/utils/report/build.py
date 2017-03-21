@@ -191,7 +191,7 @@ def _get_build_subject_string(**kwargs):
     subject_str = u""
 
     base_subject = G_(u"{job:s} build")
-    kernel_name = G_(u"({kernel:s})")
+    kernel_name = G_(u"({kernel:s} \u2013 {git_branch:s})")
     failed_builds = G_(u"{fail_count:d} failed")
     passed_builds = G_(u"{pass_count:d} passed")
     total_builds = P_(
@@ -213,22 +213,22 @@ def _get_build_subject_string(**kwargs):
     # next build: 0 failed, 10 passed, 1 error, 2 warnings (next-20150401)
     base_2 = G_(u"{:s}: {:s}: {:s}, {:s}, {:s}, {:s} {:s}")
 
-    if all([errors == 0, warnings == 0]):
+    if errors == 0 and warnings == 0:
         subject_str = base_0.format(
             base_subject,
             total_builds, failed_builds, passed_builds, kernel_name)
-    elif all([errors == 0, warnings != 0]):
+    elif errors == 0 and warnings != 0:
         subject_str = base_1.format(
             base_subject,
             total_builds,
             failed_builds, passed_builds, warnings_string, kernel_name)
-    elif all([errors != 0, warnings != 0]):
+    elif errors != 0 and warnings != 0:
         subject_str = base_2.format(
             base_subject,
             total_builds,
             failed_builds,
             passed_builds, errors_string, warnings_string, kernel_name)
-    elif all([errors != 0, warnings == 0]):
+    elif errors != 0 and warnings == 0:
         subject_str = base_1.format(
             base_subject,
             total_builds,
@@ -342,18 +342,18 @@ def _parse_and_structure_results(**kwargs):
     if error_data:
         platforms["error_data"] = {}
 
-        if all([errors_count > 0, warnings_count > 0]):
+        if errors_count > 0 and warnings_count > 0:
             summary_string = G_(u"Errors and Warnings Detected:")
-        elif all([errors_count > 0, warnings_count == 0]):
+        elif errors_count > 0 and warnings_count == 0:
             summary_string = G_(u"Errors Detected:")
-        elif all([errors_count == 0, warnings_count > 0]):
+        elif errors_count == 0 and warnings_count > 0:
             summary_string = G_(u"Warnings Detected:")
 
         platforms["error_data"]["summary"] = {}
         platforms["error_data"]["summary"]["txt"] = [summary_string]
         platforms["error_data"]["summary"]["html"] = [summary_string]
 
-        if any([errors_count > 0, warnings_count > 0]):
+        if errors_count > 0 or warnings_count > 0:
             platforms["error_data"]["data"] = {}
             error_struct = platforms["error_data"]["data"]
 
@@ -396,18 +396,18 @@ def _parse_and_structure_results(**kwargs):
                     subs["warn_string"] = warn_string
                     subs["warnings"] = warn_numb
 
-                    if all([err_numb > 0, warn_numb > 0]):
+                    if err_numb > 0 and warn_numb > 0:
                         txt_desc_str = G_(
                             u"{err_string:s}, {warn_string:s}")
                         html_desc_str = (
                             ERR_STR_HTML.format(**subs).format(**subs),
                             WARN_STR_HTML.format(**subs).format(**subs)
                         )
-                    elif all([err_numb > 0, warn_numb == 0]):
+                    elif err_numb > 0 and warn_numb == 0:
                         txt_desc_str = u"{err_string:s}"
                         html_desc_str = (
                             ERR_STR_HTML.format(**subs).format(**subs), u"")
-                    elif all([err_numb == 0, warn_numb > 0]):
+                    elif err_numb == 0 and warn_numb > 0:
                         txt_desc_str = u"{warn_string:s}"
                         html_desc_str = (
                             u"", WARN_STR_HTML.format(**subs).format(**subs))
