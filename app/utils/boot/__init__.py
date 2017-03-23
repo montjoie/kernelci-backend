@@ -253,7 +253,7 @@ def _update_boot_doc_from_json(boot_doc, boot_dict, errors):
     boot_doc.retries = boot_dict.get(models.BOOT_RETRIES_KEY, 0)
     boot_doc.uimage = boot_dict.get(models.UIMAGE_KEY, None)
     boot_doc.uimage_addr = boot_dict.get(models.UIMAGE_ADDR_KEY, None)
-    boot_doc.version = boot_dict.get(models.VERSION_KEY, "1.0")
+    boot_doc.version = boot_dict.get(models.VERSION_KEY, "1.1")
     boot_doc.warnings = boot_dict.get(models.BOOT_WARNINGS_KEY, 0)
     boot_doc.bootloader = boot_dict.get(models.BOOTLOADER_TYPE_KEY, None)
     boot_doc.bootloader_version = boot_dict.get(
