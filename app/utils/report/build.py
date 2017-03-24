@@ -101,11 +101,11 @@ def _get_errors_count(results):
 
         err_struct = {}
 
-        if all([res_errors is not None, res_errors != 0]):
+        if res_errors is not None and res_errors != 0:
             total_errors += res_errors
             err_struct[models.ERRORS_KEY] = res_errors
 
-        if all([res_warnings is not None, res_warnings != 0]):
+        if res_warnings is not None and res_warnings != 0:
             total_warnings += res_warnings
             err_struct[models.WARNINGS_KEY] = res_warnings
 
@@ -518,7 +518,7 @@ def _create_build_email(**kwargs):
     kwargs["git_commit_string"] = G_(u"Git Commit: {:s}").format(git_commit)
     kwargs["git_url_string"] = (git_txt_string, git_html_string)
 
-    if any([failed_data, error_data]):
+    if failed_data or error_data:
         kwargs["platforms"] = _parse_and_structure_results(**kwargs)
 
     if models.EMAIL_TXT_FORMAT_KEY in email_format:
