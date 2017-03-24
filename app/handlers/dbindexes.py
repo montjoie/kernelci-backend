@@ -167,6 +167,14 @@ def _ensure_build_indexes(database):
         ],
         background=True
     )
+    collection.ensure_index(
+        [
+            (models.JOB_KEY, pymongo.ASCENDING),
+            (models.KERNEL_KEY, pymongo.DESCENDING),
+            (models.CREATED_KEY, pymongo.DESCENDING)
+        ],
+        background=True
+    )
     # This is used in the aggregation pipeline.
     collection.ensure_index(
         [
