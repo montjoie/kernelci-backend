@@ -124,11 +124,12 @@ if __name__ == "__main__":
             models.JOB_COLLECTION,
             models.BUILD_COLLECTION,
             models.BOOT_COLLECTION,
-            models.ERROR_LOGS_COLLECTION
+            models.ERROR_LOGS_COLLECTION,
         ]
     )
 
     process_pool.map(add_git_branch_field, [
+        models.BOOT_REGRESSIONS_COLLECTION,
         models.ERROR_LOGS_COLLECTION,
         models.ERRORS_SUMMARY_COLLECTION,
         models.BOOT_DELTA_COLLECTION
