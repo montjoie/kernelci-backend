@@ -58,6 +58,8 @@ WARN_LOG_URL = (
 MISM_LOG_URL = (
     u"{storage_url:s}/{job:s}/{git_branch:s}/{kernel:s}/{arch:s}" +
     u"/{defconfig:s}/" + utils.BUILD_MISMATCHES_FILE)
+BUILD_SUMMARY_URL = \
+    u"{build_url:s}/{job:s}/branch/{git_branch:}/kernel/{kernel:s}/"
 
 
 # Other template strings.
@@ -493,8 +495,7 @@ def _create_build_email(**kwargs):
         if built_unique_string:
             built_unique_string = built_unique_string.format(**kwargs)
 
-    build_summary_url = u"{build_url:s}/{job:s}/kernel/{kernel:s}/".format(
-        **kwargs)
+    build_summary_url = BUILD_SUMMARY_URL.format(**kwargs)
 
     kwargs["built_unique_string"] = built_unique_string
     kwargs["tree_string"] = G_(u"Tree: {job:s}").format(**kwargs)
