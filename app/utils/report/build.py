@@ -276,27 +276,24 @@ def _parse_and_structure_results(**kwargs):
     """
     platforms = {}
     k_get = kwargs.get
-    build_url = k_get("build_url")
     error_data = k_get("error_data", None)
     errors_count = k_get("errors_count", 0)
     fail_count = k_get("fail_count", 0)
     failed_data = k_get("failed_data", None)
-    job = k_get("job")
-    kernel = k_get("kernel")
-    storage_url = k_get("storage_url")
     warnings_count = k_get("warnings_count", 0)
 
     # Local substitutions dictionary, common to both data structures parsed.
     gen_subs = {
-        "build_url": build_url,
+        "build_url": k_get("build_url"),
         "err_log_url": ERR_LOG_URL,
         "defconfig_url": DEFCONFIG_URL,
-        "job": job,
-        "kernel": kernel,
+        "job": k_get("job"),
+        "kernel": k_get("kernel"),
+        "git_branch": k_get("git_branch"),
         "log_url": LOG_URL,
         "mism_log_url": MISM_LOG_URL,
         "red": rcommon.HTML_RED,
-        "storage_url": storage_url,
+        "storage_url": k_get("storage_url"),
         "warn_log_url": WARN_LOG_URL,
         "yellow": rcommon.HTML_YELLOW
     }
