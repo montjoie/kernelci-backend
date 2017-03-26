@@ -43,20 +43,21 @@ BUILD_SEARCH_SORT = [
 
 # Various build URLS.
 DEFCONFIG_URL = (
-    u"{build_url:s}/{job:s}/kernel/{kernel:s}/defconfig/{defconfig:s}/")
+    u"{build_url:s}/{job:s}/branch/{git_branch:s}/kernel/{kernel:s}"
+    u"/defconfig/{defconfig:s}/")
 DEFCONFIG_ID_URL = (u"{build_url:s}/id/{build_id:s}/")
 LOG_URL = (
-    u"{storage_url:s}/{job:s}/{kernel:s}/{arch:s}-{defconfig:s}/" +
-    utils.BUILD_LOG_FILE)
+    u"{storage_url:s}/{job:s}/{git_branch:}/{kernel:s}/{arch:s}" +
+    u"/{defconfig:s}/" + utils.BUILD_LOG_FILE)
 ERR_LOG_URL = (
-    u"{storage_url:s}/{job:s}/{kernel:s}/{arch:s}-{defconfig:s}/" +
-    utils.BUILD_ERRORS_FILE)
+    u"{storage_url:s}/{job:s}/{git_branch:s}/{kernel:s}/{arch:s}" +
+    u"/{defconfig:s}/" + utils.BUILD_ERRORS_FILE)
 WARN_LOG_URL = (
-    u"{storage_url:s}/{job:s}/{kernel:s}/{arch:s}-{defconfig:s}/" +
-    utils.BUILD_WARNINGS_FILE)
+    u"{storage_url:s}/{job:s}/{git_branch:s}/{kernel:s}/{arch:s}" +
+    u"/{defconfig:s}/" + utils.BUILD_WARNINGS_FILE)
 MISM_LOG_URL = (
-    u"{storage_url:s}/{job:s}/{kernel:s}/{arch:s}-{defconfig:s}/" +
-    utils.BUILD_MISMATCHES_FILE)
+    u"{storage_url:s}/{job:s}/{git_branch:s}/{kernel:s}/{arch:s}" +
+    u"/{defconfig:s}/" + utils.BUILD_MISMATCHES_FILE)
 
 
 # Other template strings.

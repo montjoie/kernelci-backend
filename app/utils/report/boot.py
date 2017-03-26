@@ -42,8 +42,8 @@ BOOT_SEARCH_FIELDS = [
 ]
 
 BOARD_URL = (
-    u"{base_url:s}/boot/{board:s}/job/{job:s}/kernel/{kernel:s}/"
-    u"defconfig/{defconfig:s}/"
+    u"{base_url:s}/boot/{board:s}/job/{job:s}/branch/{git_branch:s}"
+    u"/kernel/{kernel:s}/defconfig/{defconfig:s}/"
 )
 BOOT_SUMMARY_URL = u"{boot_url:s}/{job:s}/kernel/{kernel:s}/"
 BOOT_REGRESSIONS_URL = BOOT_SUMMARY_URL + u"#regressions"
