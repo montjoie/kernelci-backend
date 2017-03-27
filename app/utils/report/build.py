@@ -193,8 +193,8 @@ def _get_build_subject_string(**kwargs):
 
     subject_str = u""
 
-    base_subject = G_(u"{job:s} build")
-    kernel_name = G_(u"({kernel:s} \u2013 {git_branch:s})")
+    base_subject = G_(u"{job:s}/{git_branch:s} build")
+    kernel_name = G_(u"({kernel:s})")
     failed_builds = G_(u"{fail_count:d} failed")
     passed_builds = G_(u"{pass_count:d} passed")
     total_builds = P_(

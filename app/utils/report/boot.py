@@ -636,7 +636,7 @@ def get_boot_subject_string(**kwargs):
     untried_count = k_get("untried_count", 0)
 
     subject_str = u""
-    base_subject = G_(u"{job:s} boot")
+    base_subject = G_(u"{job:s}/{git_branch:s} boot")
     total_boots = P_(
         u"{total_count:d} boot", u"{total_count:d} boots", total_count)
     passed_boots = G_(u"{pass_count:d} passed")
@@ -647,7 +647,7 @@ def get_boot_subject_string(**kwargs):
         conflict_count
     )
     offline_boots = G_(u"{offline_count:d} offline")
-    kernel_name = G_(u"({kernel:s} \u2013 {git_branch:s})")
+    kernel_name = G_(u"({kernel:s})")
     lab_description = G_(u"{lab_name:s}")
     untried_boots = G_(u"{untried_count:d} untried/unknown")
 

@@ -369,8 +369,8 @@ def _update_boot_doc_ids(boot_doc, database):
             doc_get(models.KERNEL_IMAGE_SIZE_KEY, None)
     else:
         utils.LOG.warn(
-            "No build document found for boot %s-%s-%s (%s)",
-            job, kernel, defconfig_full, arch)
+            "No build document found for boot %s-%s-%s-%s (%s)",
+            job, branch, kernel, defconfig_full, arch)
 
 
 def _parse_boot_from_json(boot_json, database, errors):
