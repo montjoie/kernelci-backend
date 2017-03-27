@@ -17,26 +17,24 @@ import unittest
 
 import utils.report.build as breport
 
-EXP_01 = \
-    u"a-job build: 10 builds: 0 failed, 10 passed (a-kernel \u2013 a-branch)"
+EXP_01 = u"a-job/a-branch build: 10 builds: 0 failed, 10 passed (a-kernel)"
 EXP_02 = (
-    u"a-job build: 10 builds: 0 failed, 10 passed, "
-    u"1 warning (a-kernel \u2013 a-branch)")
+    u"a-job/a-branch build: 10 builds: 0 failed, 10 passed, "
+    u"1 warning (a-kernel)")
 EXP_03 = (
-    u"a-job build: 10 builds: 0 failed, 10 passed, "
-    u"10 warnings (a-kernel \u2013 a-branch)")
+    u"a-job/a-branch build: 10 builds: 0 failed, 10 passed, "
+    u"10 warnings (a-kernel)")
 EXP_04 = (
-    u"a-job build: 10 builds: 0 failed, 10 passed, 10 errors, "
-    u"10 warnings (a-kernel \u2013 a-branch)")
+    u"a-job/a-branch build: 10 builds: 0 failed, 10 passed, 10 errors, "
+    u"10 warnings (a-kernel)")
 EXP_05 = (
-    u"a-job build: 10 builds: 0 failed, 10 passed, 1 error, "
-    u"1 warning (a-kernel \u2013 a-branch)")
-EXP_06 = (
-    u"a-job build: 10 builds: 0 failed, 10 passed, 1 error "
-    u"(a-kernel \u2013 a-branch)")
+    u"a-job/a-branch build: 10 builds: 0 failed, 10 passed, 1 error, "
+    u"1 warning (a-kernel)")
+EXP_06 = \
+    u"a-job/a-branch build: 10 builds: 0 failed, 10 passed, 1 error (a-kernel)"
 EXP_07 = (
-    u"a-job build: 10 builds: 0 failed, 10 passed, 10 errors "
-    u"(a-kernel \u2013 a-branch)")
+    u"a-job/a-branch build: 10 builds: 0 failed, 10 passed, 10 errors "
+    u"(a-kernel)")
 
 
 class TestBuildReport(unittest.TestCase):

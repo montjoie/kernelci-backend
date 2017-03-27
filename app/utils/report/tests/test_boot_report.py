@@ -18,69 +18,68 @@ import unittest
 import utils.report.boot as breport
 
 EXP_01 = \
-    u"a-job boot: 10 boots: 0 failed, 10 passed (a-kernel \u2013 a-branch)"
+    u"a-job/a-branch boot: 10 boots: 0 failed, 10 passed (a-kernel)"
 EXP_02 = \
-    u"a-job boot: 10 boots: 10 failed, 0 passed (a-kernel \u2013 a-branch)"
-EXP_03 = (
-    u"a-job boot: 10 boots: 0 failed, 0 passed, 10 offline (a-kernel "
-    u"\u2013 a-branch)")
+    u"a-job/a-branch boot: 10 boots: 10 failed, 0 passed (a-kernel)"
+EXP_03 = \
+    u"a-job/a-branch boot: 10 boots: 0 failed, 0 passed, 10 offline (a-kernel)"
 EXP_04 = (
-    u"a-job boot: 10 boots: 0 failed, 0 passed, 10 untried/unknown "
-    u"(a-kernel \u2013 a-branch)")
+    u"a-job/a-branch boot: 10 boots: 0 failed, 0 passed, 10 untried/unknown "
+    u"(a-kernel)")
 EXP_05 = (
-    u"a-job boot: 10 boots: 2 failed, 8 passed (a-kernel \u2013 a-branch)")
+    u"a-job/a-branch boot: 10 boots: 2 failed, 8 passed (a-kernel)")
 EXP_06 = (
-    u"a-job boot: 10 boots: 2 failed, 7 passed with 1 untried/unknown "
-    u"(a-kernel \u2013 a-branch)")
+    u"a-job/a-branch boot: 10 boots: 2 failed, 7 passed with 1 "
+    u"untried/unknown (a-kernel)")
 EXP_07 = (
-    u"a-job boot: 10 boots: 2 failed, 6 passed with 1 offline, "
-    u"1 untried/unknown (a-kernel \u2013 a-branch)")
+    u"a-job/a-branch boot: 10 boots: 2 failed, 6 passed with 1 offline, "
+    u"1 untried/unknown (a-kernel)")
 EXP_08 = (
-    u"a-job boot: 10 boots: 1 failed, 5 passed with 1 offline, "
-    u"1 untried/unknown, 2 conflicts (a-kernel \u2013 a-branch)")
+    u"a-job/a-branch boot: 10 boots: 1 failed, 5 passed with 1 offline, "
+    u"1 untried/unknown, 2 conflicts (a-kernel)")
 EXP_09 = (
-    u"a-job boot: 10 boots: 3 failed, 5 passed with 2 offline "
-    u"(a-kernel \u2013 a-branch)")
+    u"a-job/a-branch boot: 10 boots: 3 failed, 5 passed with 2 offline "
+    u"(a-kernel)")
 EXP_10 = (
-    u"a-job boot: 10 boots: 2 failed, 5 passed with 2 offline, "
-    u"1 conflict (a-kernel \u2013 a-branch)")
+    u"a-job/a-branch boot: 10 boots: 2 failed, 5 passed with 2 offline, "
+    u"1 conflict (a-kernel)")
 EXP_11 = (
-    u"a-job boot: 10 boots: 2 failed, 6 passed with 2 conflicts "
-    u"(a-kernel \u2013 a-branch)")
+    u"a-job/a-branch boot: 10 boots: 2 failed, 6 passed with 2 conflicts "
+    u"(a-kernel)")
 
 EXP_12 = (
-    u"a-job boot: 10 boots: 0 failed, 10 passed (a-kernel \u2013 a-branch) "
+    u"a-job/a-branch boot: 10 boots: 0 failed, 10 passed (a-kernel) "
     u"- a-lab")
 EXP_13 = (
-    u"a-job boot: 10 boots: 10 failed, 0 passed (a-kernel \u2013 a-branch) "
+    u"a-job/a-branch boot: 10 boots: 10 failed, 0 passed (a-kernel) "
     u"- a-lab")
 EXP_14 = (
-    u"a-job boot: 10 boots: 0 failed, 0 passed, 10 offline "
-    u"(a-kernel \u2013 a-branch) - a-lab")
+    u"a-job/a-branch boot: 10 boots: 0 failed, 0 passed, 10 offline "
+    u"(a-kernel) - a-lab")
 EXP_15 = (
-    u"a-job boot: 10 boots: 0 failed, 0 passed, 10 untried/unknown "
-    u"(a-kernel \u2013 a-branch) - a-lab")
+    u"a-job/a-branch boot: 10 boots: 0 failed, 0 passed, 10 untried/unknown "
+    u"(a-kernel) - a-lab")
 EXP_16 = (
-    u"a-job boot: 10 boots: 2 failed, 8 passed (a-kernel \u2013 a-branch) "
+    u"a-job/a-branch boot: 10 boots: 2 failed, 8 passed (a-kernel) "
     u"- a-lab")
 EXP_17 = (
-    u"a-job boot: 10 boots: 2 failed, 7 passed with 1 untried/unknown "
-    u"(a-kernel \u2013 a-branch) - a-lab")
+    u"a-job/a-branch boot: 10 boots: 2 failed, 7 passed with 1 "
+    u"untried/unknown (a-kernel) - a-lab")
 EXP_18 = (
-    u"a-job boot: 10 boots: 2 failed, 6 passed with 1 offline, "
-    u"1 untried/unknown (a-kernel \u2013 a-branch) - a-lab")
+    u"a-job/a-branch boot: 10 boots: 2 failed, 6 passed with 1 offline, "
+    u"1 untried/unknown (a-kernel) - a-lab")
 EXP_19 = (
-    u"a-job boot: 10 boots: 1 failed, 5 passed with 1 offline, "
-    u"1 untried/unknown, 2 conflicts (a-kernel \u2013 a-branch) - a-lab")
+    u"a-job/a-branch boot: 10 boots: 1 failed, 5 passed with 1 offline, "
+    u"1 untried/unknown, 2 conflicts (a-kernel) - a-lab")
 EXP_20 = (
-    u"a-job boot: 10 boots: 3 failed, 5 passed with 2 offline "
-    u"(a-kernel \u2013 a-branch) - a-lab")
+    u"a-job/a-branch boot: 10 boots: 3 failed, 5 passed with 2 offline "
+    u"(a-kernel) - a-lab")
 EXP_21 = (
-    u"a-job boot: 10 boots: 2 failed, 5 passed with 2 offline, "
-    u"1 conflict (a-kernel \u2013 a-branch) - a-lab")
+    u"a-job/a-branch boot: 10 boots: 2 failed, 5 passed with 2 offline, "
+    u"1 conflict (a-kernel) - a-lab")
 EXP_22 = (
-    u"a-job boot: 10 boots: 2 failed, 6 passed with 2 conflicts "
-    u"(a-kernel \u2013 a-branch) - a-lab")
+    u"a-job/a-branch boot: 10 boots: 2 failed, 6 passed with 2 conflicts "
+    u"(a-kernel) - a-lab")
 
 
 class TestBootReport(unittest.TestCase):
