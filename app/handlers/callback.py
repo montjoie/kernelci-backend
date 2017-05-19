@@ -15,6 +15,11 @@
 
 import tornado.web
 
+try:
+    import simplejson as json
+except ImportError:
+    import json
+
 import handlers.base as hbase
 import handlers.common.query
 import handlers.common.token
@@ -22,6 +27,7 @@ import handlers.response as hresponse
 import models
 import models.token as mtoken
 import utils.db
+import taskqueue.tasks.callback as taskq
 
 
 class CallbackHandler(hbase.BaseHandler):
@@ -53,6 +59,48 @@ class CallbackHandler(hbase.BaseHandler):
     def execute_put(self, *args, **kwargs):
         return hresponse.HandlerResponse(501)
 
+    def execute_post(self, *args, **kwargs):
+        """Execute the POST pre-operations.
+
+        Checks that everything is OK to perform a POST.
+        """
+        response = None
+        valid_token, token = self.validate_req_token("POST")
+
+        if valid_token:
+            valid_request = handlers.common.request.valid_post_request(
+                self.request.headers, self.request.remote_ip)
+
+            if valid_request == 200:
+                try:
+                    json_obj = json.loads(
+                        self.request.body.decode("utf-8"),
+                        encoding="utf-8")
+
+                    kwargs["json_obj"] = json_obj
+                    kwargs["token"] = token
+
+                    response = self._post(*args, **kwargs)
+                except ValueError, ex:
+                    self.log.exception(ex)
+                    error = "No JSON data found in the POST request"
+                    self.log.error(error)
+                    response = hresponse.HandlerResponse(422)
+                    response.reason = error
+            else:
+                response = hresponse.HandlerResponse(valid_request)
+                response.reason = (
+                    "%s: %s" %
+                    (
+                        self._get_status_message(valid_request),
+                        "Use %s as the content type" % self.content_type
+                    )
+                )
+        else:
+            response = hresponse.HandlerResponse(403)
+
+        return response
+
     def _post(self, *args, **kwargs):
         response = hresponse.HandlerResponse()
 
@@ -64,7 +112,7 @@ class CallbackHandler(hbase.BaseHandler):
             if valid_lab:
                 response.status_code = 202
                 response.reason = "Request accepted and being imported"
-                self._execute_callback(kwargs["json_obj"])
+                self._execute_callback(kwargs["json_obj"], lab_name)
             else:
                 response.status_code = 403
                 response.reason = (
@@ -124,7 +172,7 @@ class CallbackHandler(hbase.BaseHandler):
 
         return valid_lab, error
 
-    def _execute_callback(self, json_obj):
+    def _execute_callback(self, json_obj, lab_name):
         """A wrapper for the real callback execution logic.
 
         This should be an async operation.
@@ -146,5 +194,8 @@ class LavaCallbackHandler(CallbackHandler):
     def _valid_keys(method):
         return models.LAVA_CALLBACK_VALID_KEYS.get(method, None)
 
-    def _execute_callback(self, json_obj):
-        pass
+    def _execute_callback(self, json_obj, lab_name):
+        taskq.callback_import_lava.apply_async([
+            json_obj,
+            lab_name
+        ])
