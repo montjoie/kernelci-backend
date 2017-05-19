@@ -37,7 +37,9 @@ def kernelci_json_encoder(obj):
     :return A unicode string.
     """
     return json.dumps(
-        obj, default=default, ensure_ascii=False, separators=(",", ":"))
+        obj,
+        default=default,
+        ensure_ascii=True, separators=(",", ":"), encoding="utf-8")
 
 
 def kernelci_json_decoder(obj):
@@ -47,4 +49,4 @@ def kernelci_json_decoder(obj):
     :type obj: string or unicode
     :return A JSON object.
     """
-    return json.loads(obj, object_hook=object_hook)
+    return json.loads(obj, encoding="utf-8", object_hook=object_hook)
