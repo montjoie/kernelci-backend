@@ -11,7 +11,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""All boot related celery tasks."""
+"""All callback related celery tasks."""
 
 import bson
 import datetime
@@ -31,19 +31,18 @@ LAVA_DUMP_PATH = os.path.join(CALLBACK_DUMP_PATH, "lava")
 
 
 @taskc.app.task(name="callback-import-lava")
-def callback_import_lava(json_obj, lab_name):
+def callback_import_from_lava(json_obj, lab_name, doc_id):
     """Just a wrapper around the real boot import function.
 
     This is used to provide a Celery-task access to the import function.
 
     :param json_obj: The JSON object with the values necessary to import the
     boot report.
-    :type json_obj: dictionary
-    :param db_options: The database connection parameters.
-    :type db_options: dictionary
-    :param mail_options: The options necessary to connect to the SMTP server.
-    :type mail_options: dictionary
-    :return tuple The return code; and the document id.
+    :type json_obj: dict
+    :param lab_name: The name of the boot lab.
+    :type lab_name: str
+    :param doc_id: The boot document ID saved in the db.
+    :type doc_id: str
     """
     utils.LOG.info("Importing LAVA callback data for %s", lab_name)
 
