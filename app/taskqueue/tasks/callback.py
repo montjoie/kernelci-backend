@@ -34,5 +34,8 @@ def lava_boot(json_obj, lab_name):
     ret_code, doc_id, errors = \
         utils.callback.lava.add_boot(json_obj, lab_name,
                                      taskc.app.conf.db_options)
+
+    utils.callback.lava.add_tests(json_obj, lab_name, "lava", taskc.app.conf.db_options)
+
     # TODO: handle errors.
     return ret_code, doc_id

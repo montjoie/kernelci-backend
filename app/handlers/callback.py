@@ -24,7 +24,7 @@ import models.token as mtoken
 import taskqueue.tasks.callback as taskq
 import utils.callback.lava
 import utils.db
-
+import json
 
 class CallbackHandler(hbase.BaseHandler):
     """Base handler for the /callback URLs."""
@@ -61,6 +61,14 @@ class CallbackHandler(hbase.BaseHandler):
         try:
             lab_name = self.get_query_argument(models.LAB_NAME_KEY)
             req_token = kwargs["token"]
+
+            description = kwargs["json_obj"]['description']
+            filename = "/tmp/result-" + description
+            print("Get " + description + " to " + filename)
+            with open(filename, "w") as resultfiletmp:
+                resultfiletmp.write(json.dumps(kwargs["json_obj"]))
+                resultfiletmp.close()
+
 
             valid_lab, error = self._is_valid_token(req_token, lab_name)
             if valid_lab:
