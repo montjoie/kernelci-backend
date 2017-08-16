@@ -17,9 +17,15 @@ import os
 import yaml
 
 import utils
+import utils.tests_import as ttt
 import utils.boot
 import utils.db
 import utils.lava_log_parser
+import pymongo
+import models.test_suite as mtest_suite
+import models.test_case as mtest_case
+import datetime
+import bson
 
 # copied from lava-server/lava_scheduler_app/models.py
 SUBMITTED = 0
@@ -234,3 +240,75 @@ def add_boot(job_data, lab_name, db_options, base_path=utils.BASE_PATH):
             utils.errors.add_error(errors, ret_code, msg)
 
     return ret_code, doc_id, errors
+
+def add_tests(job_data, lab_name, test_suite_name, db_options, base_path=utils.BASE_PATH):
+    print("= Handle " + test_suite_name)
+
+    definition = yaml.load(job_data["definition"], Loader=yaml.CLoader)
+    job_meta = definition["metadata"]
+    #first add/update test suite in database
+    build_id = "undeff"
+    spec = {
+            models.NAME_KEY: test_suite_name,
+            models.LAB_NAME_KEY: lab_name,
+            models.BUILD_ID_KEY: build_id,
+            models.KERNEL_KEY: job_meta["git.describe"],
+            models.DEFCONFIG_KEY: job_meta["kernel.defconfig"],
+            models.ARCHITECTURE_KEY: job_meta["job.arch"],
+            models.BOARD_KEY: job_meta["platform.name"],
+            models.JOB_KEY: job_meta["job.name"],
+    }
+
+    try:
+        database = utils.db.get_db_connection(db_options)
+        prev_doc = utils.db.find_one2(
+            database[models.TEST_SUITE_COLLECTION], spec)
+        if prev_doc:
+            print("Found one old doc for Tsuite " + test_suite_name)
+            tsdoc_id = prev_doc.get(models.ID_KEY, None)
+        else:
+            print("No previous doc for Tsuite " + test_suite_name)
+            test_suite_doc = mtest_suite.TestSuiteDocument.from_json(spec)
+            test_suite_doc.created_on = datetime.datetime.now(tz=bson.tz_util.utc)
+            ret_val, tsdoc_id = utils.db.save(database, test_suite_doc, manipulate=True)
+
+    except pymongo.errors.ConnectionFailure, ex:
+        print("error")
+
+    #then analyze each test case
+    test_suite = yaml.load(job_data["results"][test_suite_name], Loader=yaml.CLoader)
+    for result in test_suite:
+        testcasename = result["name"]
+        print("== Found TC " + testcasename + " in " + test_suite_name)
+        if "namespace" in result["metadata"]:
+            namespace = result["metadata"]["namespace"]
+            if namespace is not None:
+                print(result)
+                print("Found namespace " + namespace)
+                testcase = result["metadata"]["case"]
+                print("Need to read " + testcase)
+                utils.callback.lava.add_tests(job_data, lab_name, testcase, db_options)
+
+        tcase_spec = {
+            models.NAME_KEY: testcasename,
+            models.TEST_SUITE_ID_KEY: tsdoc_id,
+            models.TEST_SUITE_NAME_KEY: test_suite_name,
+            models.KERNEL_KEY: job_meta["git.describe"],
+            models.DEFCONFIG_KEY: job_meta["kernel.defconfig"],
+            models.ARCHITECTURE_KEY: job_meta["job.arch"],
+            models.BOARD_KEY: job_meta["platform.name"],
+        }
+
+        try:
+            tc_prev_doc = utils.db.find_one2(database[models.TEST_CASE_COLLECTION], tcase_spec)
+            if tc_prev_doc:
+                print("Found one old doc for TC " + testcasename)
+            else:
+                print("No previous doc for TC " + testcasename)
+                test_case_doc = mtest_case.TestCaseDocument.from_json(tcase_spec)
+                test_case_doc.created_on = datetime.datetime.now(tz=bson.tz_util.utc)
+                ret_val, tcdoc_id = utils.db.save(database, test_case_doc, manipulate=True)
+                ttt.update_test_suite_add_test_case_id(tcdoc_id, tsdoc_id, test_suite_name, db_options)
+
+        except pymongo.errors.ConnectionFailure, ex:
+            print("error")
